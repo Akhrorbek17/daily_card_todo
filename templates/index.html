@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+<style>
+    body { background-color: #f8f9fa; }
+    .board { display: flex; gap: 20px; padding: 20px; }
+    .column { flex: 1; background: white; padding: 15px; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); }
+    .task { background: #dfe6e9; padding: 10px; margin: 8px 0; border-radius: 5px; cursor: grab; }
+    .task:active { cursor: grabbing; }
+</style>
+<body>
+
+<script>
+    if(window.history.replaceState ) {
+        window.history.replaceState(null , null, window.location.href);
+    }
+</script>
+{% if messages %}
+{% for message in messages %}
+<p class="text-dark text-center" id="message_box">{{message}}</p>
+{% endfor %}
+{% endif %}
+<div class="container mt-3">
+    <div class="section d-flex justify-content-around">
+        <div class="header">
+            <h3><i class="fa-solid fa-chart-simple"></i>Daily Tasks</h3>
+        </div>
+        <ul class="menu list-unstyled d-flex justify-content-around align-items-center gap-2">
+            <li>
+                <button class="btn btn-primary ">New Item</button>
+            </li>
+            <li>
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+            </li>
+            <li>
+                <i class="fa-solid fa-user"></i>
+                Person
+            </li>
+            <li>
+                <i class="fa-solid fa-filter"></i>
+                Filter
+            </li>
+            <li>
+                <i class="fa-solid fa-sort"></i>
+                Sort
+            </li>
+            <li>
+                <i class="fa-solid fa-expand"></i>
+                Full Screen
+            </li>
+            <li>
+                <button class="btn btn-outline-primary">settings</button>
+            </li>
+            <li class="ml-2">
+                <button class="btn btn-outline-secondary">...</button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="text-center mt-4">📌 Daily Tasks Board</h2>
+
+    <form method="post" action="{% url 'main:add_task' %}" class="input-group mb-3">
+        {% csrf_token %}
+        <input type="text" name="title" class="form-control" placeholder="Enter a new task">
+        <button class="btn btn-primary" name="button" type="submit">Add Task</button>
+    </form>
+
+    <!-- <div class="board">
+        <div class="column">
+            <h4>To Do</h4>
+            {% for task in tasks %}
+                {% if task.status == "todo" %}
+                    <div class="task d-flex justify-content-between">
+                        {{ task.title }}
+                        <br>
+                        <a href="{% url 'main:update_task' task.id 'inprogress' %}" class="btn btn-warning btn-sm">Move to In Progress</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="column">
+            <h4>In Progress</h4>
+            {% for task in tasks %}
+                {% if task.status == "inprogress" %}
+                    <div class="task d-flex justify-content-between">
+                        {{ task.title }}
+                        <br>
+                        <a href="{% url 'main:update_task' task.id 'done' %}" class="btn btn-success btn-sm">Move to Done</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="column">
+            <h4>Done</h4>
+            {% for task in tasks %}
+                {% if task.status == "done" %}
+                    <div class="task text-light bg-success">
+                        {{ task.title }}
+                        <br>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>     -->
+    <div class="row">
+        <div class="col-md-4">
+            <h4 class="text-center">To Do</h4>
+            {% for task in tasks %}
+                {% if task.status == "todo" %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ task.title }}</h5>
+                            <a href="{% url 'main:update_task' task.id 'inprogress' %}" class="btn btn-warning btn-sm">Move to In Progress</a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <h4 class="text-center">In Progress</h4>
+            {% for task in tasks %}
+                {% if task.status == "inprogress" %}
+                    <div class="card mb-3 border-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ task.title }}</h5>
+                            <a href="{% url 'main:update_task' task.id 'done' %}" class="btn btn-success btn-sm">Move to Done</a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <h4 class="text-center">Done</h4>
+            {% for task in tasks %}
+                {% if task.status == "done" %}
+                    <div class="card mb-3 border-success">
+                        <div class="card-body text-light bg-success d-flex justify-content-between">
+                            <h5 class="card-title">{{ task.title }}</h5>
+                            <a href="{% url 'main:delete_task' task.id %}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</div>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>
